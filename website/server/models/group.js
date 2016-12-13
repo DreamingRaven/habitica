@@ -39,6 +39,10 @@ const LARGE_GROUP_COUNT_MESSAGE_CUTOFF = shared.constants.LARGE_GROUP_COUNT_MESS
 const CRON_SAFE_MODE = nconf.get('CRON_SAFE_MODE') === 'true';
 const CRON_SEMI_SAFE_MODE = nconf.get('CRON_SEMI_SAFE_MODE') === 'true';
 
+export const SPAM_LIMIT = 2;
+export const SPAM_TIME = 10000;
+export const SPAM_ADMIN_LEVEL = 4;
+
 export let schema = new Schema({
   name: {type: String, required: true},
   description: String,
@@ -628,6 +632,35 @@ schema.methods.finishQuest = async function finishQuest (quest) {
   this.markModified('quest');
 
   return await User.update(q, updates, {multi: true}).exec();
+};
+
+//exported function that checks if user has reached their message limit in set window
+schema.methods.isSpam = function (user)
+{
+  if(this._id === TAVERN_ID) {
+    // if contributor
+    if(user.contributor && user.contributor.level >= SPAM_ADMIN_LEVEL) {
+      // contributors have free-reign
+      return false;
+    }
+    // allocating locals
+    let time = Date.now();
+    let messageNum = 0;
+    // loop that checks messages by user, within time frame
+    for (let i = 0; i < this.chat.length; i++) {
+      let message = this.chat[i];
+      if (message.uuid === user._id && time - message.timestamp <= SPAM_TIME) {
+        messageNum++;
+        if (messageNum >= SPAM_LIMIT) {
+          return true;
+        }
+      } else if (time - message.timestamp > SPAM_TIME) {
+        return false;
+      }
+    }
+  }
+  // user has no valid ID
+  return true;
 };
 
 function _isOnQuest (user, progress, group) {

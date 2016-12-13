@@ -1,6 +1,7 @@
 import { authWithHeaders } from '../../middlewares/auth';
 import { model as Group } from '../../models/group';
 import { model as User } from '../../models/user';
+//import { model as Chat } from '../../models/chat';
 import {
   NotFound,
   NotAuthorized,
@@ -105,8 +106,16 @@ api.postChat = {
       throw new NotFound('Your chat privileges have been revoked.');
     }
 
+    //if(chat.isSpam(user)) {
+    //  throw new NotAuthorized(res.t('messageChatSpam'));
+    //}
+
     let lastClientMsg = req.query.previousMsg;
     chatUpdated = lastClientMsg && group.chat && group.chat[0] && group.chat[0].id !== lastClientMsg ? true : false;
+
+    if (group.isSpam(user)) {
+      throw new NotAuthorized(res.t('messageChatSpam'));
+    }
 
     let newChatMessage = group.sendChat(req.body.message, user);
 
