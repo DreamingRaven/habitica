@@ -281,6 +281,41 @@ habitrpg.controller("InventoryCtrl",
           }
 
           break;
+		  
+		  case "all":
+		  ar pet = user.items.currentPet;
+          if (pet) {
+            User.equip({params:{type: 'pet', key: pet}});
+          }
+
+          var mount = user.items.currentMount;
+          if (mount) {
+            User.equip({params:{type: 'mount', key: mount}});
+          }
+
+          var background = user.preferences.background;
+          if (background) {
+            User.unlock({query:{path:"background."+background}});
+          }
+		  for (item in user.items.gear.equipped){
+            var itemKey = user.items.gear.equipped[item];
+            if (user.items.gear.owned[itemKey]) {
+              User.equip({params: {type: 'equipped', key: itemKey}});
+            }
+          }
+          break;
+
+        case "costume":
+          for (item in user.items.gear.costume){
+            var itemKey = user.items.gear.costume[item];
+            if (user.items.gear.owned[itemKey]) {
+              User.equip({params: {type:"costume", key: itemKey}});
+            }
+          }
+		  
+		  
+		  
+		  break;
       }
     };
 

@@ -1,3 +1,20 @@
+Skip to content
+This repository
+Search
+Pull requests
+Issues
+Gist
+ @MBLHarrison
+ Unwatch 6
+  Star 0
+  Fork 1 DreamingRaven/Software-Engineering Private
+ Code  Issues 0  Pull requests 0  Projects 0  Wiki  Pulse  Graphs
+Branch: UnequipAllButt… Find file Copy pathSoftware-Engineering/equipment.jade
+532a9e7  3 days ago
+@MBLHarrison MBLHarrison Unequip Button
+1 contributor
+RawBlameHistory     
+111 lines (93 sloc)  4.93 KB
 mixin orderByButton
   mixin choice(attr)
     li(ng-class="{ 'active': orderChoice === '#{attr}' }")
@@ -12,7 +29,17 @@ mixin orderByButton
       li.divider(role="separator")
       - each attr in ["constitution", "intelligence", "perception", "strength"]
         +choice(attr)
-
+		
+  .btn-group1
+    button.btn.btn-default.dropdown-toggle(type='button', data-toggle='dropdown')
+      | {{env.t("orderBy", { item: env.t(orderChoice) })}} #[span.caret]
+    ul.dropdown-menu
+      - each attr in ["set"]
+        +choice(attr)
+      li.divider(role="separator")
+      - each attr in ["constitution", "intelligence", "perception", "strength"]
+        +choice(attr)
+		
 mixin groupingButton
   .btn-group
     button.btn.btn-default.dropdown-toggle(type='button', data-toggle='dropdown', ng-init='setGrouping("klass")')
@@ -57,7 +84,7 @@ mixin equipmentList(equipmentType)
       .btn-toolbar
         .btn-group
           button.btn.btn-default(type="button", ng-click='dequip("battleGear");') {{env.t("unequipBattleGear")}}
-
+          button.btn.btn-default(type="button", ng-click='dequip("all");') {{env.t("unequipAll")}}
       br
 
       .btn-toolbar
@@ -98,3 +125,5 @@ mixin equipmentList(equipmentType)
 
       li.customize-menu(ng-if='user.preferences.costume')
         +equipmentList("costume")
+Contact GitHub API Training Shop Blog About
+© 2016 GitHub, Inc. Terms Privacy Security Status Help
